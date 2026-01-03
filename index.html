@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Vinisha</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Mobile Optimization: Stops scrolling/bouncing */
+        body { 
+            overscroll-behavior: none; 
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* --- Animations --- */
+        
+        /* Floating Clouds */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        /* Pop In Effect (for Envelope) */
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-in { animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        /* Heartbeat (for the Envelope waiting to be clicked) */
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .heartbeat { animation: heartbeat 1.5s infinite ease-in-out; }
+        
+        /* Handwriting Font Class */
+        .font-handwriting { font-family: 'Dancing Script', cursive; }
+    </style>
+</head>
+<body class="bg-gray-900 h-dvh w-screen flex items-center justify-center overflow-hidden">
+
+    <div id="app-container" class="relative w-full h-full max-w-md bg-sky-100 overflow-hidden shadow-2xl sm:h-[800px] sm:rounded-3xl border-gray-800 transition-colors duration-1000">
+        
+        <div id="bg-layer" class="absolute inset-0 pointer-events-none transition-opacity duration-1000">
+            <div id="day-sky" class="absolute inset-0 bg-sky-100 transition-opacity duration-1000">
+                <div class="absolute top-16 left-6 text-6xl opacity-20 animate-float">☁️</div>
+                <div class="absolute top-32 right-[-20px] text-6xl opacity-20 animate-float" style="animation-delay: 1s;">☁️</div>
+            </div>
+            <div id="night-sky" class="absolute inset-0 bg-indigo-900 opacity-0 transition-opacity duration-1000">
+                <div class="absolute top-10 left-10 text-yellow-200 text-4xl opacity-80 animate-pulse">✨</div>
+                <div class="absolute top-6 right-6 text-yellow-100 text-6xl opacity-90">🌙</div>
+            </div>
+        </div>
+
+        <div id="stage" class="absolute inset-0 flex items-end justify-center pb-40 pointer-events-none">
+            
+            <div id="ollie" class="absolute bottom-32 transition-all duration-700 transform translate-y-full opacity-0 z-10">
+                <img src="ollie.png" class="w-40 drop-shadow-xl" alt="Ollie">
+            </div>
+
+            <div id="ollie-guilty" class="absolute bottom-32 transition-all duration-700 opacity-0 scale-90 z-10">
+                <img src="ollie-guilty.png" class="w-44 drop-shadow-xl" alt="Guilty Ollie">
+            </div>
+
+             <div id="ollie-sleep" class="absolute bottom-28 left-10 transition-all duration-700 opacity-0 z-10">
+                <img src="ollie-sleep.png" class="w-36 drop-shadow-xl" alt="Sleeping Ollie">
+            </div>
+
+            <div id="girl" class="absolute bottom-32 right-6 transition-all duration-700 transform translate-x-full opacity-0 z-20">
+                <img src="girl.png" class="w-32 drop-shadow-xl" alt="Girl">
+            </div>
+
+            <div id="shopkeeper" class="absolute bottom-32 left-4 transition-all duration-700 transform -translate-x-full opacity-0 z-0">
+                <img src="shopkeeper.png" class="w-36 drop-shadow-xl" alt="Shopkeeper">
+            </div>
+
+            <div id="family" class="absolute bottom-32 transition-all duration-700 transform scale-50 opacity-0 z-10">
+                <img src="family.png" class="w-64 drop-shadow-xl" alt="Family">
+            </div>
+
+            <div id="biryani" class="absolute bottom-32 right-24 transition-all duration-700 opacity-0 z-10">
+                <img src="biryani.png" class="w-28 drop-shadow-xl" alt="Biryani">
+            </div>
+
+            <div id="bed" class="absolute bottom-32 transition-all duration-700 opacity-0 z-0">
+                <img src="bed.png" class="w-64 drop-shadow-xl" alt="Bed">
+            </div>
+
+            <div id="letter-closed" onclick="openLetterModal()" class="absolute bottom-60 cursor-pointer pointer-events-auto opacity-0 z-40">
+                <div class="text-[100px] drop-shadow-2xl">💌</div> 
+                <div class="absolute -bottom-8 w-full text-center text-sm font-bold text-gray-500 bg-white/50 rounded-full px-2 py-1">Tap me!</div>
+            </div>
+
+        </div>
+
+        <div id="letter-modal" class="absolute inset-0 z-[60] flex items-center justify-center bg-black/40 opacity-0 pointer-events-none transition-opacity duration-500">
+            <div id="letter-card" class="bg-[#fff9f0] p-8 rounded-lg shadow-2xl transform scale-50 transition-transform duration-500 text-center max-w-[80%] w-64 rotate-1 border border-rose-100">
+                <div class="text-rose-500 text-4xl mb-2">❤️</div>
+                <p class="font-handwriting text-5xl text-gray-800 mb-4 leading-tight">I Love You</p>
+                <p class="text-gray-400 text-xs italic mb-6">Forever & Always</p>
+                <button onclick="closeLetterModal()" class="bg-rose-400 hover:bg-rose-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-md transition-colors pointer-events-auto">
+                    Close
+                </button>
+            </div>
+        </div>
+
+        <div id="ui-layer" class="absolute bottom-0 w-full h-[35%] bg-gradient-to-t from-white via-white to-transparent flex flex-col items-center justify-end pb-12 pt-10 px-6 text-center z-50">
+            <p id="story-text" class="text-xl font-bold text-gray-700 mb-6 transition-opacity duration-500 opacity-100 min-h-[3.5rem] leading-tight">
+                </p>
+            
+            <button id="next-btn" class="bg-rose-500 hover:bg-rose-600 active:scale-95 text-white font-bold py-4 px-12 rounded-full shadow-xl transition-all w-3/4 max-w-xs text-lg">
+                Start ❤️
+            </button>
+        </div>
+
+        <div id="final-screen" class="absolute inset-0 bg-rose-50/95 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-1000 z-[100]">
+            <h1 class="text-4xl font-bold text-rose-600 mb-2 drop-shadow-md">Sorry Vinisha ❤️</h1>
+            <p class="text-gray-600 text-lg">Can we start fresh?</p>
+            <button onclick="location.reload()" class="mt-12 bg-white border-2 border-rose-200 text-rose-400 px-6 py-2 rounded-full text-sm shadow-sm">Replay Story</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Variables ---
+        let currentScene = 0;
+        const textElement = document.getElementById('story-text');
+        const btnElement = document.getElementById('next-btn');
+        const daySky = document.getElementById('day-sky');
+        const nightSky = document.getElementById('night-sky');
+        const finalScreen = document.getElementById('final-screen');
+        const letterClosed = document.getElementById('letter-closed');
+        const letterModal = document.getElementById('letter-modal');
+        const letterCard = document.getElementById('letter-card');
+
+        // --- Helper Function: Show/Hide Characters ---
+        function setVisible(ids) {
+            // 1. Reset everything to hidden
+            ['ollie', 'ollie-guilty', 'ollie-sleep', 'girl', 'shopkeeper', 'family', 'biryani', 'bed'].forEach(id => {
+                const el = document.getElementById(id);
+                el.style.opacity = '0';
+                el.style.transform = ''; // Clear transforms
+                
+                // Set default exit positions
+                if(id === 'ollie') el.classList.add('translate-y-full');
+                if(id === 'girl') el.classList.add('translate-x-full');
+                if(id === 'shopkeeper') el.classList.add('-translate-x-full');
+            });
+
+            // 2. Hide Modal & Letter if not active
+            if(!ids.includes('letter-active')) {
+                letterClosed.style.opacity = '0';
+                letterClosed.style.pointerEvents = 'none';
+                letterClosed.classList.remove('pop-in', 'heartbeat');
+                
+                letterModal.style.opacity = '0';
+                letterModal.style.pointerEvents = 'none';
+            }
+
+            // 3. Show specific items for this scene
+            ids.forEach(id => {
+                if(id === 'letter-active') return; // Skip tag
+
+                const el = document.getElementById(id);
+                el.style.opacity = '1'; // Make visible
+                
+                // Remove exit positions so they slide in
+                if(id === 'ollie') el.classList.remove('translate-y-full');
+                if(id === 'girl') el.classList.remove('translate-x-full');
+                if(id === 'shopkeeper') el.classList.remove('-translate-x-full');
+            });
+        }
+
+        // --- Letter Interaction Logic ---
+
+        // Open the Window
+        function openLetterModal() {
+            letterClosed.style.opacity = '0'; // Hide envelope
+            letterModal.style.opacity = '1';  // Show background
+            letterModal.style.pointerEvents = 'auto';
+            letterCard.classList.remove('scale-50'); // Zoom in card
+            letterCard.classList.add('scale-100');
+        }
+
+        // Close the Window
+        function closeLetterModal() {
+            letterModal.style.opacity = '0';
+            letterModal.style.pointerEvents = 'none';
+            letterCard.classList.remove('scale-100');
+            letterCard.classList.add('scale-50');
+
+            // Change Text
+            textElement.style.opacity = 0;
+            setTimeout(() => {
+                textElement.innerText = "I mean it... ❤️";
+                textElement.style.opacity = 1;
+            }, 300);
+
+            // Bring back the button
+            setTimeout(() => {
+                btnElement.classList.remove('opacity-0', 'pointer-events-none');
+                btnElement.innerText = "Continue >";
+            }, 500);
+        }
+
+        // --- Story Scenes ---
+        const scenes = [
+            { // 0. Start
+                text: "Hey... I made a little story for you.",
+                action: () => {
+                    setVisible([]);
+                    btnElement.innerText = "Next >";
+                }
+            },
+            { // 1. Ollie Appears
+                text: "This is Ollie. He's usually a very good boy. 🐶",
+                action: () => {
+                    setVisible(['ollie']);
+                    document.getElementById('ollie').classList.add('animate-bounce');
+                }
+            },
+            { // 2. Shop
+                text: "One day, Ollie and I went to the shop...",
+                action: () => {
+                    setVisible(['ollie', 'girl', 'shopkeeper']);
+                    document.getElementById('ollie').classList.remove('animate-bounce');
+                }
+            },
+            { // 3. LETTER SCENE (Interactive)
+                text: "The shopkeeper gave us a special note...",
+                action: () => {
+                    // Show characters
+                    setVisible(['ollie', 'girl', 'shopkeeper', 'letter-active']);
+                    
+                    // Show Envelope
+                    letterClosed.style.opacity = '1';
+                    letterClosed.style.pointerEvents = 'auto'; 
+                    letterClosed.classList.add('pop-in', 'heartbeat');
+
+                    // HIDE Button (She must click the letter)
+                    btnElement.classList.add('opacity-0', 'pointer-events-none');
+                }
+            },
+            { // 4. Post-Letter
+                text: "We were so happy! We bought treats.",
+                action: () => {
+                    setVisible(['ollie', 'girl']);
+                    document.getElementById('ollie').classList.add('animate-bounce');
+                }
+            },
+            { // 5. Biryani
+                text: "And we ordered your favorite... Biryani! 🍗",
+                action: () => {
+                    setVisible(['ollie', 'girl', 'biryani']);
+                }
+            },
+            { // 6. Guilty
+                text: "But... uh oh. Ollie ate half of it. 😳",
+                action: () => {
+                    setVisible(['ollie-guilty', 'girl']);
+                }
+            },
+            { // 7. Family
+                text: "Then Papa, Mumma, and sisters came home!",
+                action: () => {
+                    setVisible(['ollie', 'family']);
+                }
+            },
+            { // 8. Sleep
+                text: "It was a long day. Time to sleep.",
+                action: () => {
+                    daySky.style.opacity = '0';
+                    nightSky.style.opacity = '1';
+                    setVisible(['bed', 'ollie-sleep']); 
+                }
+            },
+            { // 9. Morning
+                text: "But a new day always brings fresh starts.",
+                action: () => {
+                    daySky.style.opacity = '1';
+                    nightSky.style.opacity = '0';
+                    setVisible(['ollie', 'girl']);
+                    document.getElementById('ollie').classList.add('animate-bounce');
+                }
+            },
+            { // 10. End
+                text: "",
+                action: () => {
+                    finalScreen.style.pointerEvents = 'auto';
+                    finalScreen.style.opacity = '1';
+                }
+            }
+        ];
+
+        // Click Handler
+        btnElement.addEventListener('click', () => {
+            currentScene++;
+            if (currentScene < scenes.length) {
+                textElement.style.opacity = 0;
+                setTimeout(() => {
+                    scenes[currentScene].action();
+                    // Don't auto-update text on the letter scene (Scene 3)
+                    if(currentScene !== 3) { 
+                        textElement.innerText = scenes[currentScene].text;
+                    } else {
+                         textElement.innerText = "The shopkeeper gave us a special note...";
+                    }
+                    textElement.style.opacity = 1;
+                }, 300);
+            }
+        });
+
+    </script>
+</body>
+</html>
