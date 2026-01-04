@@ -2,59 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Journey</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Vinisha</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            background-color: #fff9f0; /* Soft paper color */
+        /* --- GLOBAL & UTILITIES --- */
+        body { 
+            background-color: #111827; /* Default to dark for App mode startup */
             margin: 0;
-            overflow-x: hidden;
+            /* We start with hidden scroll for the App Mode */
+            overflow: hidden; 
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+            transition: background-color 1s ease;
         }
 
-        /* The SVG Container - Fixed behind content */
+        /* Helper to hide/show views */
+        .hidden-view { display: none !important; }
+
+        /* --- APP MODE ANIMATIONS --- */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-in { animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .heartbeat { animation: heartbeat 1.5s infinite ease-in-out; }
+        
+        .font-handwriting { font-family: 'Dancing Script', cursive; }
+
+        /* --- SCROLL MODE STYLES --- */
+        /* The SVG Container */
         .path-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%; /* Will be set by JS */
+            /* Height set by JS */
             z-index: 0;
             pointer-events: none;
             overflow: hidden;
         }
 
-        /* The Path Styles */
-        svg {
-            width: 100%;
-            height: 100%;
-        }
+        svg { width: 100%; height: 100%; }
+        path { fill: none; stroke-width: 5; stroke-linecap: round; }
 
-        path {
-            fill: none;
-            stroke-width: 5;
-            stroke-linecap: round;
-        }
+        #path-bg { stroke: #e5e7eb; stroke-dasharray: 10, 10; }
+        #path-main { stroke: #f43f5e; stroke-dasharray: 10000; stroke-dashoffset: 10000; }
 
-        /* The Grey Line (Background track) */
-        #path-bg {
-            stroke: #e5e7eb; /* Light Gray */
-            stroke-dasharray: 10, 10; /* Dashed effect */
-        }
-
-        /* The Red Line (Active drawing) */
-        #path-main {
-            stroke: #f43f5e; /* Rose-500 */
-            /* These properties are manipulated by JS */
-            stroke-dasharray: 10000; 
-            stroke-dashoffset: 10000; 
-        }
-
-        /* Story Items */
         .story-section {
             position: relative;
             z-index: 10;
-            min-height: 80vh; /* Spacing */
+            min-height: 80vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -63,10 +76,7 @@
             transition: all 0.8s ease-out;
         }
 
-        .story-section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .story-section.visible { opacity: 1; transform: translateY(0); }
 
         .card {
             background: white;
@@ -78,11 +88,9 @@
             border: 2px solid #ffe4e6;
         }
 
-        /* Alternating Layout */
         .story-section:nth-child(odd) { justify-content: flex-start; padding-left: 10%; }
         .story-section:nth-child(even) { justify-content: flex-end; padding-right: 10%; }
 
-        /* Mobile adjustment */
         @media (max-width: 768px) {
             .story-section:nth-child(odd) { padding-left: 5%; }
             .story-section:nth-child(even) { padding-right: 5%; }
@@ -91,133 +99,245 @@
 </head>
 <body>
 
-    <div class="path-container" id="svg-wrapper">
-        <svg preserveAspectRatio="none">
-            <path id="path-bg" />
-            <path id="path-main" />
-        </svg>
+    <div id="view-app" class="h-dvh w-screen flex items-center justify-center overflow-hidden">
+        
+        <div id="app-container" class="relative w-full h-full max-w-md bg-sky-100 overflow-hidden shadow-2xl sm:h-[800px] sm:rounded-3xl border-gray-800 transition-colors duration-1000">
+            
+            <div id="bg-layer" class="absolute inset-0 pointer-events-none transition-opacity duration-1000">
+                <div id="day-sky" class="absolute inset-0 bg-sky-100 transition-opacity duration-1000">
+                    <div class="absolute top-16 left-6 text-6xl opacity-20 animate-float">☁️</div>
+                    <div class="absolute top-32 right-[-20px] text-6xl opacity-20 animate-float" style="animation-delay: 1s;">☁️</div>
+                </div>
+                <div id="night-sky" class="absolute inset-0 bg-indigo-900 opacity-0 transition-opacity duration-1000">
+                    <div class="absolute top-10 left-10 text-yellow-200 text-4xl opacity-80 animate-pulse">✨</div>
+                    <div class="absolute top-6 right-6 text-yellow-100 text-6xl opacity-90">🌙</div>
+                </div>
+            </div>
+
+            <div id="stage" class="absolute inset-0 flex items-end justify-center pb-40 pointer-events-none">
+                <div id="ollie" class="absolute bottom-32 transition-all duration-700 transform translate-y-full opacity-0 z-10"><img src="ollie.png" class="w-40 drop-shadow-xl"></div>
+                <div id="ollie-guilty" class="absolute bottom-32 transition-all duration-700 opacity-0 scale-90 z-10"><img src="ollie-guilty.png" class="w-44 drop-shadow-xl"></div>
+                <div id="ollie-sleep" class="absolute bottom-28 left-10 transition-all duration-700 opacity-0 z-10"><img src="ollie-sleep.png" class="w-36 drop-shadow-xl"></div>
+                <div id="girl" class="absolute bottom-32 right-6 transition-all duration-700 transform translate-x-full opacity-0 z-20"><img src="girl.png" class="w-32 drop-shadow-xl"></div>
+                <div id="shopkeeper" class="absolute bottom-32 left-4 transition-all duration-700 transform -translate-x-full opacity-0 z-0"><img src="shopkeeper.png" class="w-36 drop-shadow-xl"></div>
+                <div id="family" class="absolute bottom-32 transition-all duration-700 transform scale-50 opacity-0 z-10"><img src="family.png" class="w-64 drop-shadow-xl"></div>
+                <div id="biryani" class="absolute bottom-32 right-24 transition-all duration-700 opacity-0 z-10"><img src="biryani.png" class="w-28 drop-shadow-xl"></div>
+                <div id="bed" class="absolute bottom-32 transition-all duration-700 opacity-0 z-0"><img src="bed.png" class="w-64 drop-shadow-xl"></div>
+
+                <div id="letter-closed" onclick="openLetterModal()" class="absolute bottom-60 cursor-pointer pointer-events-auto opacity-0 z-40">
+                    <div class="text-[100px] drop-shadow-2xl">💌</div> 
+                    <div class="absolute -bottom-8 w-full text-center text-sm font-bold text-gray-500 bg-white/50 rounded-full px-2 py-1">Tap me!</div>
+                </div>
+            </div>
+
+            <div id="letter-modal" class="absolute inset-0 z-[60] flex items-center justify-center bg-black/40 opacity-0 pointer-events-none transition-opacity duration-500">
+                <div id="letter-card" class="bg-[#fff9f0] p-8 rounded-lg shadow-2xl transform scale-50 transition-transform duration-500 text-center max-w-[80%] w-64 rotate-1 border border-rose-100">
+                    <div class="text-rose-500 text-4xl mb-2">❤️</div>
+                    <p class="font-handwriting text-5xl text-gray-800 mb-4 leading-tight">I Love You</p>
+                    <p class="text-gray-400 text-xs italic mb-6">Forever & Always</p>
+                    <button onclick="closeLetterModal()" class="bg-rose-400 hover:bg-rose-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-md pointer-events-auto">Close</button>
+                </div>
+            </div>
+
+            <div id="ui-layer" class="absolute bottom-0 w-full h-[35%] bg-gradient-to-t from-white via-white to-transparent flex flex-col items-center justify-end pb-12 pt-10 px-6 text-center z-50">
+                <p id="story-text" class="text-xl font-bold text-gray-700 mb-6 transition-opacity duration-500 opacity-100 min-h-[3.5rem] leading-tight"></p>
+                <button id="next-btn" class="bg-rose-500 hover:bg-rose-600 active:scale-95 text-white font-bold py-4 px-12 rounded-full shadow-xl transition-all w-3/4 max-w-xs text-lg">Start ❤️</button>
+            </div>
+
+            <div id="final-screen" class="absolute inset-0 bg-rose-50/95 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-1000 z-[100]">
+                <h1 class="text-4xl font-bold text-rose-600 mb-2 drop-shadow-md">Sorry Vinisha ❤️</h1>
+                <p class="text-gray-600 text-lg">Can we start fresh?</p>
+                
+                <button onclick="switchToScrollView()" class="mt-12 bg-white border-2 border-rose-200 text-rose-400 px-6 py-3 rounded-full text-sm font-bold shadow-sm hover:bg-rose-50 transition-colors pointer-events-auto">
+                    See Our Journey 📜
+                </button>
+            </div>
+        </div>
     </div>
 
-    <div class="relative w-full max-w-2xl mx-auto py-20" id="content-wrapper">
 
-        <div class="story-section">
-            <div class="card">
-                <img src="Ollie.png" class="w-full mb-4 rounded-lg">
-                <h2 class="text-xl font-bold text-gray-800">It Started Here</h2>
-                <p class="text-gray-600">This is Ollie. He was waiting for an adventure.</p>
-            </div>
+    <div id="view-scroll" class="hidden-view relative w-full max-w-2xl mx-auto py-20">
+        
+        <div class="path-container" id="svg-wrapper">
+            <svg preserveAspectRatio="none">
+                <path id="path-bg" />
+                <path id="path-main" />
+            </svg>
         </div>
 
-        <div class="story-section">
-            <div class="card">
-                <img src="shopkeeper.png" class="w-full mb-4 rounded-lg">
-                <h2 class="text-xl font-bold text-gray-800">The Shop</h2>
-                <p class="text-gray-600">We met a kind man who had a secret.</p>
+        <div id="content-wrapper">
+            <div class="story-section"><div class="card"><img src="Ollie.png" class="w-full mb-4 rounded-lg"><h2 class="text-xl font-bold text-gray-800">It Started Here</h2><p class="text-gray-600">This is Ollie. He was waiting for an adventure.</p></div></div>
+            
+            <div class="story-section"><div class="card"><img src="shopkeeper.png" class="w-full mb-4 rounded-lg"><h2 class="text-xl font-bold text-gray-800">The Shop</h2><p class="text-gray-600">We met a kind man who had a secret.</p></div></div>
+            
+            <div class="story-section"><div class="card"><div class="text-[80px] animate-bounce">💌</div><h2 class="text-xl font-bold text-rose-500">A Surprise</h2><p class="text-gray-600">He handed us a note. It was for you.</p></div></div>
+            
+            <div class="story-section"><div class="card"><img src="biryani.png" class="w-full mb-4 rounded-lg"><h2 class="text-xl font-bold text-gray-800">Yum!</h2><p class="text-gray-600">We got your favorite food.</p></div></div>
+            
+            <div class="story-section"><div class="card"><img src="ollie-guilty.png" class="w-full mb-4 rounded-lg"><h2 class="text-xl font-bold text-gray-800">Oops...</h2><p class="text-gray-600">Ollie couldn't resist. Look at that belly!</p></div></div>
+            
+            <div class="story-section"><div class="card"><img src="family.png" class="w-full mb-4 rounded-lg"><h2 class="text-xl font-bold text-gray-800">Family Time</h2><p class="text-gray-600">Everyone came home to celebrate.</p></div></div>
+            
+            <div class="story-section" style="justify-content: center; padding: 0;">
+                <div class="card bg-rose-50 border-rose-300 transform scale-125">
+                    <h1 class="text-3xl font-bold text-rose-600 mb-2">Sorry ❤️</h1>
+                    <p class="text-gray-600">I love you, Vinisha.</p>
+                </div>
             </div>
         </div>
-
-        <div class="story-section">
-            <div class="card">
-                <div class="text-[80px] animate-bounce">💌</div>
-                <h2 class="text-xl font-bold text-rose-500">A Surprise</h2>
-                <p class="text-gray-600">He handed us a note. It was for you.</p>
-            </div>
-        </div>
-
-        <div class="story-section">
-            <div class="card">
-                <img src="biryani.png" class="w-full mb-4 rounded-lg">
-                <h2 class="text-xl font-bold text-gray-800">Yum!</h2>
-                <p class="text-gray-600">We got your favorite food.</p>
-            </div>
-        </div>
-
-        <div class="story-section">
-            <div class="card">
-                <img src="ollie-guilty.png" class="w-full mb-4 rounded-lg">
-                <h2 class="text-xl font-bold text-gray-800">Oops...</h2>
-                <p class="text-gray-600">Ollie couldn't resist. Look at that belly!</p>
-            </div>
-        </div>
-
-        <div class="story-section">
-            <div class="card">
-                <img src="family.png" class="w-full mb-4 rounded-lg">
-                <h2 class="text-xl font-bold text-gray-800">Family Time</h2>
-                <p class="text-gray-600">Everyone came home to celebrate.</p>
-            </div>
-        </div>
-
-        <div class="story-section" style="justify-content: center; padding: 0;">
-            <div class="card bg-rose-50 border-rose-300 transform scale-125">
-                <h1 class="text-3xl font-bold text-rose-600 mb-2">Sorry ❤️</h1>
-                <p class="text-gray-600">I love you, Vinisha.</p>
-            </div>
-        </div>
-
     </div>
+
 
     <script>
-        // 1. Setup Elements
+        /* --------------------------------------
+           PART 1: APP MODE LOGIC
+           -------------------------------------- */
+        let currentScene = 0;
+        const textElement = document.getElementById('story-text');
+        const btnElement = document.getElementById('next-btn');
+        const daySky = document.getElementById('day-sky');
+        const nightSky = document.getElementById('night-sky');
+        const finalScreen = document.getElementById('final-screen');
+        const letterClosed = document.getElementById('letter-closed');
+        const letterModal = document.getElementById('letter-modal');
+        const letterCard = document.getElementById('letter-card');
+
+        function setVisible(ids) {
+            ['ollie', 'ollie-guilty', 'ollie-sleep', 'girl', 'shopkeeper', 'family', 'biryani', 'bed'].forEach(id => {
+                const el = document.getElementById(id);
+                el.style.opacity = '0'; el.style.transform = ''; 
+                if(id === 'ollie') el.classList.add('translate-y-full');
+                if(id === 'girl') el.classList.add('translate-x-full');
+                if(id === 'shopkeeper') el.classList.add('-translate-x-full');
+            });
+
+            if(!ids.includes('letter-active')) {
+                letterClosed.style.opacity = '0'; letterClosed.style.pointerEvents = 'none';
+                letterClosed.classList.remove('pop-in', 'heartbeat');
+                letterModal.style.opacity = '0'; letterModal.style.pointerEvents = 'none';
+            }
+
+            ids.forEach(id => {
+                if(id === 'letter-active') return; 
+                const el = document.getElementById(id);
+                el.style.opacity = '1'; 
+                if(id === 'ollie') el.classList.remove('translate-y-full');
+                if(id === 'girl') el.classList.remove('translate-x-full');
+                if(id === 'shopkeeper') el.classList.remove('-translate-x-full');
+            });
+        }
+
+        function openLetterModal() {
+            letterClosed.style.opacity = '0'; letterModal.style.opacity = '1'; letterModal.style.pointerEvents = 'auto';
+            letterCard.classList.remove('scale-50'); letterCard.classList.add('scale-100');
+        }
+
+        function closeLetterModal() {
+            letterModal.style.opacity = '0'; letterModal.style.pointerEvents = 'none';
+            letterCard.classList.remove('scale-100'); letterCard.classList.add('scale-50');
+            textElement.style.opacity = 0;
+            setTimeout(() => { textElement.innerText = "I mean it... ❤️"; textElement.style.opacity = 1; }, 300);
+            setTimeout(() => { btnElement.classList.remove('opacity-0', 'pointer-events-none'); btnElement.innerText = "Continue >"; }, 500);
+        }
+
+        const appScenes = [
+            { text: "Hey... I made a little story for you.", action: () => { setVisible([]); btnElement.innerText = "Next >"; } },
+            { text: "This is Ollie. He's usually a very good boy. 🐶", action: () => { setVisible(['ollie']); document.getElementById('ollie').classList.add('animate-bounce'); } },
+            { text: "One day, Ollie and I went to the shop...", action: () => { setVisible(['ollie', 'girl', 'shopkeeper']); document.getElementById('ollie').classList.remove('animate-bounce'); } },
+            { text: "The shopkeeper gave us a special note...", action: () => { setVisible(['ollie', 'girl', 'shopkeeper', 'letter-active']); letterClosed.style.opacity = '1'; letterClosed.style.pointerEvents = 'auto'; letterClosed.classList.add('pop-in', 'heartbeat'); btnElement.classList.add('opacity-0', 'pointer-events-none'); } },
+            { text: "We were so happy! We bought treats.", action: () => { setVisible(['ollie', 'girl']); document.getElementById('ollie').classList.add('animate-bounce'); } },
+            { text: "And we ordered your favorite... Biryani! 🍗", action: () => { setVisible(['ollie', 'girl', 'biryani']); } },
+            { text: "But... uh oh. Ollie ate half of it. 😳", action: () => { setVisible(['ollie-guilty', 'girl']); } },
+            { text: "Then Papa, Mumma, and sisters came home!", action: () => { setVisible(['ollie', 'family']); } },
+            { text: "It was a long day. Time to sleep.", action: () => { daySky.style.opacity = '0'; nightSky.style.opacity = '1'; setVisible(['bed', 'ollie-sleep']); } },
+            { text: "But a new day always brings fresh starts.", action: () => { daySky.style.opacity = '1'; nightSky.style.opacity = '0'; setVisible(['ollie', 'girl']); document.getElementById('ollie').classList.add('animate-bounce'); } },
+            { text: "", action: () => { finalScreen.style.pointerEvents = 'auto'; finalScreen.style.opacity = '1'; } }
+        ];
+
+        btnElement.addEventListener('click', () => {
+            currentScene++;
+            if (currentScene < appScenes.length) {
+                textElement.style.opacity = 0;
+                setTimeout(() => {
+                    appScenes[currentScene].action();
+                    if(currentScene !== 3) textElement.innerText = appScenes[currentScene].text;
+                    else textElement.innerText = "The shopkeeper gave us a special note...";
+                    textElement.style.opacity = 1;
+                }, 300);
+            }
+        });
+
+        /* --------------------------------------
+           PART 2: SWITCHER LOGIC
+           -------------------------------------- */
+        function switchToScrollView() {
+            // 1. Hide App
+            document.getElementById('view-app').classList.add('hidden-view');
+            
+            // 2. Show Scroll View
+            const scrollView = document.getElementById('view-scroll');
+            scrollView.classList.remove('hidden-view');
+
+            // 3. Change Body Style (Allow Scrolling)
+            document.body.style.overflow = 'auto';
+            document.body.style.backgroundColor = '#fff9f0'; // Light paper color for scroll view
+
+            // 4. Initialize SVG Path (Must be done after display:block)
+            // Wait 50ms for the DOM to render the new display state
+            setTimeout(() => {
+                updatePath();
+                onScroll();
+            }, 50);
+        }
+
+        /* --------------------------------------
+           PART 3: SCROLL MODE LOGIC
+           -------------------------------------- */
         const pathMain = document.getElementById('path-main');
         const pathBg = document.getElementById('path-bg');
         const contentWrapper = document.getElementById('content-wrapper');
         const svgWrapper = document.getElementById('svg-wrapper');
-        const sections = document.querySelectorAll('.story-section');
+        const scrollSections = document.querySelectorAll('.story-section');
 
-        // 2. Draw the Winding Line Dynamically
         function updatePath() {
-            // Get dimensions
             const width = contentWrapper.offsetWidth;
             const height = contentWrapper.offsetHeight;
+            if(height === 0) return; // Don't run if hidden
             
-            // Set SVG height to match content
             svgWrapper.style.height = height + 'px';
 
-            // Create a winding Bezier curve string
-            // It zig-zags left (10%) to right (90%) down the page
-            let d = `M ${width * 0.2} 50`; // Start Top Left-ish
+            let d = `M ${width * 0.2} 50`; 
+            const stepY = height / scrollSections.length;
             
-            const stepY = height / sections.length;
-            
-            sections.forEach((section, index) => {
+            scrollSections.forEach((section, index) => {
                 const y = (index + 1) * stepY - (stepY/2);
-                const x = (index % 2 === 0) ? width * 0.2 : width * 0.8; // Zig Zag logic
-                
-                // Curve logic
+                const x = (index % 2 === 0) ? width * 0.2 : width * 0.8; 
                 const prevY = (index) * stepY;
                 const prevX = (index % 2 === 0) ? width * 0.8 : width * 0.2;
-                
-                // Smooth Bezier Curve connecting points
                 d += ` C ${prevX} ${prevY + stepY/2}, ${x} ${y - stepY/2}, ${x} ${y}`;
             });
 
-            // Set the path data
             pathMain.setAttribute('d', d);
             pathBg.setAttribute('d', d);
 
-            // Setup Dash Array for Animation (Hide line initially)
             const pathLength = pathMain.getTotalLength();
             pathMain.style.strokeDasharray = pathLength;
             pathMain.style.strokeDashoffset = pathLength;
         }
 
-        // 3. Sync Scroll to Draw Line
         function onScroll() {
+            // Only run if Scroll View is active
+            if(document.getElementById('view-scroll').classList.contains('hidden-view')) return;
+
             const pathLength = pathMain.getTotalLength();
-            
-            // Calculate how much we have scrolled relative to the document height
             const scrollTop = window.scrollY;
             const docHeight = document.body.scrollHeight - window.innerHeight;
             const scrollPercent = scrollTop / docHeight;
-
-            // Draw the line based on percentage
-            // Math.max ensures we don't draw past the end
             const drawLength = pathLength - (scrollPercent * pathLength);
+            
             pathMain.style.strokeDashoffset = Math.max(0, drawLength);
 
-            // 4. Reveal Images logic
-            sections.forEach(section => {
+            scrollSections.forEach(section => {
                 const rect = section.getBoundingClientRect();
                 if(rect.top < window.innerHeight * 0.75) {
                     section.classList.add('visible');
@@ -225,16 +345,7 @@
             });
         }
 
-        // Initialize
-        window.addEventListener('load', () => {
-            updatePath();
-            onScroll();
-        });
-
-        // Update on resize
         window.addEventListener('resize', updatePath);
-        
-        // Listen to scroll
         window.addEventListener('scroll', onScroll);
 
     </script>
